@@ -1,4 +1,7 @@
-﻿using System;
+﻿//Testing GitHUb Integration and editing//
+
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,17 +13,22 @@ namespace Engine
     {
         public int Gold { get; set; }
         public int ExperiencePoints { get; set; }
-        public int Level { get; set; }
+        //For determining player level based on experience points.
+        //+1 is to keep the player from starting at level 0 because of default round down behavior
+        public int Level
+        {
+            get { return ((ExperiencePoints / 100) + 1); }
+        }
+
         public Location CurrentLocation { get; set; }
         public List<InventoryItem> Inventory { get; set; }
         public List<PlayerQuest> Quests { get; set; }
 
-        public Player(int currentHitPoints, int maximumHitPoints, int gold, int experiencePoints, int level) : base(currentHitPoints, maximumHitPoints)
+        public Player(int currentHitPoints, int maximumHitPoints, int gold, int experiencePoints) : base(currentHitPoints, maximumHitPoints)
         {
             Gold = gold;
             ExperiencePoints = experiencePoints;
-            Level = level;
-
+            
             Inventory = new List<InventoryItem>();
             Quests = new List<PlayerQuest>();
         }

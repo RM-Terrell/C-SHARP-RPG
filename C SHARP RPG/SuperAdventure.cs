@@ -11,7 +11,7 @@ using System.IO;
 
 using Engine;
 
-//Testing Giithub settings commit
+
 
 namespace SuperAdventure
 {
@@ -21,7 +21,7 @@ namespace SuperAdventure
         private Monster _currentMonster;
         private const string PLAYER_DATA_FILE_NAME = "PlayerData.xml";
 
-        public SuperAdventure()
+        public SuperAdventure() // starting constructor
         {
             InitializeComponent();
 
@@ -34,19 +34,28 @@ namespace SuperAdventure
                 _player = Player.CreateDefaultPlayer();
             }
 
-            MoveTo(_player.CurrentLocation);
+            lblHitPoints.DataBindings.Add("Text", _player, "CurrentHitPoints"); // labels added after object creation. MUST be done in this order
+            lblGold.DataBindings.Add("Text", _player, "Gold");
+            lblExperience.DataBindings.Add("Text", _player, "ExperiencePoints");
+            lblLevel.DataBindings.Add("Text", _player, "Level");
 
-            UpdatePlayerStats();
+            MoveTo(_player.CurrentLocation);
         }
 
-        //Function for controlling all player stats updating.
-        private void UpdatePlayerStats()
+        //Function for controlling all player stats updating. No longer needed post Data Bind addition
+        //private void UpdatePlayerStats()
+        //{
+        //    // Refresh player information and inventory controls
+        //    lblHitPoints.Text = _player.CurrentHitPoints.ToString();
+        //    lblGold.Text = _player.Gold.ToString();
+        //    lblExperience.Text = _player.ExperiencePoints.ToString();
+        //    lblLevel.Text = _player.Level.ToString();
+        //}
+
+        // Saves players curent weapon
+        private void cboWeapons_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Refresh player information and inventory controls
-            lblHitPoints.Text = _player.CurrentHitPoints.ToString();
-            lblGold.Text = _player.Gold.ToString();
-            lblExperience.Text = _player.ExperiencePoints.ToString();
-            lblLevel.Text = _player.Level.ToString();
+            _player.CurrentWeapon = (Weapon)cboWeapons.SelectedItem; // Castes to weapon because cant take generic types
         }
 
 
@@ -96,7 +105,7 @@ namespace SuperAdventure
             _player.CurrentHitPoints = _player.MaximumHitPoints;
 
             // Update Hit Points in UI
-            lblHitPoints.Text = _player.CurrentHitPoints.ToString();
+            
 
             // Does the location have a quest?
             if (newLocation.QuestAvailableHere != null)
@@ -199,8 +208,7 @@ namespace SuperAdventure
                 btnUseWeapon.Visible = false;
                 btnUsePotion.Visible = false;
             }
-            // Refresh player's stats
-            UpdatePlayerStats();
+            
 
             // Refresh player's inventory list
             UpdateInventoryListInUI();
@@ -275,11 +283,20 @@ namespace SuperAdventure
             }
             else
             {
+                cboWeapons.SelectedIndexChanged -= cboWeapons_SelectedIndexChanged;
                 cboWeapons.DataSource = weapons;
+                cboWeapons.SelectedIndexChanged += cboWeapons_SelectedIndexChanged;
                 cboWeapons.DisplayMember = "Name";
                 cboWeapons.ValueMember = "ID";
 
-                cboWeapons.SelectedIndex = 0;
+                if (_player.CurrentWeapon != null)
+                {
+                    cboWeapons.SelectedItem = _player.CurrentWeapon;
+                }
+                else
+                {
+                    cboWeapons.SelectedIndex = 0;
+                }
             }
         }
 
@@ -387,7 +404,7 @@ namespace SuperAdventure
 
                 // Refresh player information and inventory controls
 
-                UpdatePlayerStats();
+                
                 UpdateInventoryListInUI();
                 UpdateWeaponListInUI();
                 UpdatePotionListInUI();
@@ -411,8 +428,7 @@ namespace SuperAdventure
                 // Subtract damage from player
                 _player.CurrentHitPoints -= damageToPlayer;
 
-                // Refresh player data in UI
-                lblHitPoints.Text = _player.CurrentHitPoints.ToString();
+                
 
                 if (_player.CurrentHitPoints <= 0)
                 {
@@ -473,7 +489,7 @@ namespace SuperAdventure
             }
 
             // Refresh player data in UI
-            lblHitPoints.Text = _player.CurrentHitPoints.ToString();
+            
             UpdateInventoryListInUI();
             UpdatePotionListInUI();
 

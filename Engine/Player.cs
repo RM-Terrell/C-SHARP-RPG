@@ -12,17 +12,44 @@ namespace Engine
 {
     public class Player : LivingCreature
     {
-        public int Gold { get; set; }
+        //public int Gold { get; set; }
         //Set to private to make sure other parts of the program change experience points by accident
-        public int ExperiencePoints { get; private set; }
+        //public int ExperiencePoints { get; private set; }
         //For determining player level based on experience points.
         //+1 is to keep the player from starting at level 0 because of default round down behavior
+
+        private int _gold; //new gold and xp system of data binding
+        private int _experiencePoints;
+
+        public int Gold
+        {
+            get { return _gold; }
+            set
+            {
+                _gold = value;
+                OnPropertyChanged("Gold");
+            }
+        }
+
+        public int ExperiencePoints
+        {
+            get { return _experiencePoints; }
+            private set
+            {
+                _experiencePoints = value;
+                OnPropertyChanged("ExperiencePoints");
+                OnPropertyChanged("Level"); //Raises level event too because it is always calcuated from xp
+            }
+        }
+
+
         public int Level
         {
             get { return ((ExperiencePoints / 100) + 1); }
         }
 
         public Location CurrentLocation { get; set; }
+        public Weapon CurrentWeapon { get; set; }
         public List<InventoryItem> Inventory { get; set; }
         public List<PlayerQuest> Quests { get; set; }
 
@@ -61,6 +88,14 @@ namespace Engine
 
                 int currentLocationID = Convert.ToInt32(playerData.SelectSingleNode("/Player/Stats/CurrentLocation").InnerText);
                 player.CurrentLocation = World.LocationByID(currentLocationID);
+
+
+
+                if (playerData.SelectSingleNode("/Player/Stats/CurrentWeapon") != null) //loeds currently selected weapon
+                {
+                    int currentWeaponID = Convert.ToInt32(playerData.SelectSingleNode("/Player/Stats/CurrentWeapon").InnerText);
+                    player.CurrentWeapon = (Weapon)World.ItemByID(currentWeaponID);
+                }
 
                 foreach (XmlNode node in playerData.SelectNodes("/Player/InventoryItems/InventoryItem"))
                 {
@@ -229,6 +264,13 @@ namespace Engine
             XmlNode currentLocation = playerData.CreateElement("CurrentLocation");
             currentLocation.AppendChild(playerData.CreateTextNode(this.CurrentLocation.ID.ToString()));
             stats.AppendChild(currentLocation);
+
+            if (CurrentWeapon != null) //Saves id of current weapon if they have one
+            {
+                XmlNode currentWeapon = playerData.CreateElement("CurrentWeapon");
+                currentWeapon.AppendChild(playerData.CreateTextNode(this.CurrentWeapon.ID.ToString()));
+                stats.AppendChild(currentWeapon);
+            }
 
             // Create the "InventoryItems" child node to hold each InventoryItem node
             XmlNode inventoryItems = playerData.CreateElement("InventoryItems");

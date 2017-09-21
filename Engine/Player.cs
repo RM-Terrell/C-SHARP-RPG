@@ -10,14 +10,8 @@ using System.ComponentModel;
 namespace Engine
 {
     public class Player : LivingCreature
-    {
-        //public int Gold { get; set; }
-        //Set to private to make sure other parts of the program change experience points by accident
-        //public int ExperiencePoints { get; private set; }
-        //For determining player level based on experience points.
-        //+1 is to keep the player from starting at level 0 because of default round down behavior
-
-        private int _gold; //new gold and xp system of data binding
+    {        
+        private int _gold; 
         private int _experiencePoints;
 
         public int Gold
@@ -37,7 +31,7 @@ namespace Engine
             {
                 _experiencePoints = value;
                 OnPropertyChanged("ExperiencePoints");
-                OnPropertyChanged("Level"); //Raises level event too because it is always calcuated from xp
+                OnPropertyChanged("Level"); 
             }
         }
 
@@ -49,8 +43,20 @@ namespace Engine
 
         public Location CurrentLocation { get; set; }
         public Weapon CurrentWeapon { get; set; }
-        public BindingList<InventoryItem> Inventory { get; set; } //Using bindling list for searching and sorting functionality
+        public BindingList<InventoryItem> Inventory { get; set; } 
         public BindingList<PlayerQuest> Quests { get; set; }
+
+
+
+        public List<Weapon> Weapons
+        {
+            get { return Inventory.Where(x => x.Details is Weapon).Select(x => x.Details as Weapon).ToList(); }
+        }
+
+        public List<HealingPotion> Potions
+        {
+            get { return Inventory.Where(x => x.Details is HealingPotion).Select(x => x.Details as HealingPotion).ToList(); }
+        }
 
         private Player(int currentHitPoints, int maximumHitPoints, int gold, int experiencePoints) : base(currentHitPoints, maximumHitPoints)
         {
@@ -130,16 +136,13 @@ namespace Engine
 
 
 
-        // Adventures in LINQ 
+         
         public bool HasRequiredItemToEnterThisLocation(Location location)
         {
             if (location.ItemRequiredToEnter == null)
-            {
-                // If no required it, return "true"
+            {                
                 return true;
-            }
-
-            // Check if player inventory item is equal to required, return true or false
+            }            
             return Inventory.Any(ii => ii.Details.ID == location.ItemRequiredToEnter.ID);
         }
 
@@ -162,18 +165,14 @@ namespace Engine
         }
 
         public bool HasAllQuestCompletionItems(Quest quest)
-        {
-            // See if the player has all the items needed to complete the quest here
+        {            
             foreach (QuestCompletionItem qci in quest.QuestCompletionItems)
-            {
-                // Check each item in the player's inventory, to see if they have it, AND enough of it
+            {                
                 if (!Inventory.Any(ii => ii.Details.ID == qci.Details.ID && ii.Quantity >= qci.Quantity))
                 {
                     return false;
                 }
-            }
-
-            // If all above true, return true because all requirements met
+            }            
             return true;
         }
 
@@ -190,8 +189,7 @@ namespace Engine
                 foreach (InventoryItem ii in Inventory)
                 {
                     if (ii.Details.ID == qci.Details.ID)
-                    {
-                        // Subtract the quantity from the player's inventory that was needed to complete the quest
+                    {                        
                         ii.Quantity -= qci.Quantity;
                         break;
                     }
@@ -204,29 +202,25 @@ namespace Engine
             foreach (InventoryItem ii in Inventory)
             {
                 if (ii.Details.ID == itemToAdd.ID)
-                {
-                    // They have the item in their inventory, so increase the quantity by one
+                {                    
                     ii.Quantity++;
 
-                    return; // We added the item, and are done, so get out of this function
+                    return; 
                 }
-            }
-
-            // They didn't have the item, so add it to their inventory, with a quantity of 1
+            }            
             Inventory.Add(new InventoryItem(itemToAdd, 1));
         }
 
         public void MarkQuestCompleted(Quest quest)
-        {
-            // Find the quest in the player's quest list
+        {            
             foreach (PlayerQuest pq in Quests)
             {
                 if (pq.Details.ID == quest.ID)
                 {
-                    // Mark it as completed
+                    
                     pq.IsCompleted = true;
 
-                    return; // We found the quest, and marked it complete, so get out of this function
+                    return; 
                 }
             }
         }
@@ -234,16 +228,13 @@ namespace Engine
             public string ToXmlString()
         {
             XmlDocument playerData = new XmlDocument();
-
-            // Create the top-level XML node
+            
             XmlNode player = playerData.CreateElement("Player");
             playerData.AppendChild(player);
-
-            // Create the "Stats" child node to hold the other player statistics nodes
+            
             XmlNode stats = playerData.CreateElement("Stats");
             player.AppendChild(stats);
-
-            // Create the child nodes for the "Stats" node
+            
             XmlNode currentHitPoints = playerData.CreateElement("CurrentHitPoints");
             currentHitPoints.AppendChild(playerData.CreateTextNode(this.CurrentHitPoints.ToString()));
             stats.AppendChild(currentHitPoints);
@@ -264,18 +255,16 @@ namespace Engine
             currentLocation.AppendChild(playerData.CreateTextNode(this.CurrentLocation.ID.ToString()));
             stats.AppendChild(currentLocation);
 
-            if (CurrentWeapon != null) //Saves id of current weapon if they have one
+            if (CurrentWeapon != null) 
             {
                 XmlNode currentWeapon = playerData.CreateElement("CurrentWeapon");
                 currentWeapon.AppendChild(playerData.CreateTextNode(this.CurrentWeapon.ID.ToString()));
                 stats.AppendChild(currentWeapon);
             }
-
-            // Create the "InventoryItems" child node to hold each InventoryItem node
+            
             XmlNode inventoryItems = playerData.CreateElement("InventoryItems");
             player.AppendChild(inventoryItems);
-
-            // Create an "InventoryItem" node for each item in the player's inventory
+            
             foreach (InventoryItem item in this.Inventory)
             {
                 XmlNode inventoryItem = playerData.CreateElement("InventoryItem");
@@ -290,12 +279,10 @@ namespace Engine
 
                 inventoryItems.AppendChild(inventoryItem);
             }
-
-            // Create the "PlayerQuests" child node to hold each PlayerQuest node
+            
             XmlNode playerQuests = playerData.CreateElement("PlayerQuests");
             player.AppendChild(playerQuests);
-
-            // Create a "PlayerQuest" node for each quest the player has acquired
+            
             foreach (PlayerQuest quest in this.Quests)
             {
                 XmlNode playerQuest = playerData.CreateElement("PlayerQuest");
@@ -311,7 +298,7 @@ namespace Engine
                 playerQuests.AppendChild(playerQuest);
             }
 
-            return playerData.InnerXml; // The XML document, as a string, so we can save the data to disk
+            return playerData.InnerXml; 
         }
 
     }

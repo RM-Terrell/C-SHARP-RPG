@@ -13,7 +13,7 @@ namespace Engine
 
         public int CurrentHitPoints
         {
-            get { return _currentHitPoints; } //This way when the current hit points are set, OnPropertyChanged event will be raised (was auto prop before)
+            get { return _currentHitPoints; }
             set
             {
                 _currentHitPoints = value;

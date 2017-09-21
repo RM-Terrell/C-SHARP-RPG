@@ -21,7 +21,7 @@ namespace SuperAdventure
         private Monster _currentMonster;
         private const string PLAYER_DATA_FILE_NAME = "PlayerData.xml";
 
-        public SuperAdventure() // starting constructor
+        public SuperAdventure() 
         {
             InitializeComponent();
 
@@ -42,7 +42,7 @@ namespace SuperAdventure
             //----------Inventory Data Binding----------------------//
 
             dgvInventory.RowHeadersVisible = false;
-            dgvInventory.AutoGenerateColumns = false; // "false" because i want to manually config columns
+            dgvInventory.AutoGenerateColumns = false; 
 
             dgvInventory.DataSource = _player.Inventory;
 
@@ -85,7 +85,7 @@ namespace SuperAdventure
         
         private void cboWeapons_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _player.CurrentWeapon = (Weapon)cboWeapons.SelectedItem; // Castes to weapon because cant take generic types
+            _player.CurrentWeapon = (Weapon)cboWeapons.SelectedItem; 
         }
 
 
@@ -272,8 +272,7 @@ namespace SuperAdventure
             }
 
             if (weapons.Count == 0)
-            {
-                // The player doesn't have any weapons, so hide the weapon combobox and "Use" button
+            {                
                 cboWeapons.Visible = false;
                 btnUseWeapon.Visible = false;
             }

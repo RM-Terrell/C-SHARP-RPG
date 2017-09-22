@@ -58,6 +58,48 @@ namespace Engine
             get { return Inventory.Where(x => x.Details is HealingPotion).Select(x => x.Details as HealingPotion).ToList(); }
         }
 
+
+        private void RaiseInventoryChangedEvent(Item item)
+        {
+            if (item is Weapon)
+            {
+                OnPropertyChanged("Weapons");
+            }
+
+            if (item is HealingPotion)
+            {
+                OnPropertyChanged("Potions");
+            }
+        }
+
+        public void RemoveItemFromInventory(Item itemToRemove, int quantity = 1)
+        {
+            InventoryItem item = Inventory.SingleOrDefault(ii => ii.Details.ID == itemToRemove.ID);
+
+            if (item == null)
+            {
+                // The item is not in the player's inventory, so ignore it.
+                // We might want to raise an error for this situation
+            }
+            else
+            {                
+                item.Quantity -= quantity;
+
+                // We might want to raise an error for this situation
+                if (item.Quantity < 0)
+                {
+                    item.Quantity = 0;
+                }
+                                
+                if (item.Quantity == 0)
+                {
+                    Inventory.Remove(item);
+                }
+                
+                RaiseInventoryChangedEvent(itemToRemove);
+            }
+        }
+
         private Player(int currentHitPoints, int maximumHitPoints, int gold, int experiencePoints) : base(currentHitPoints, maximumHitPoints)
         {
             Gold = gold;
@@ -128,14 +170,10 @@ namespace Engine
             }
             catch
             {
-                // If there was an error with the XML data, return a default player object
                 return Player.CreateDefaultPlayer();
             }
         }
-
-
-
-
+        
          
         public bool HasRequiredItemToEnterThisLocation(Location location)
         {
@@ -186,29 +224,30 @@ namespace Engine
         {
             foreach (QuestCompletionItem qci in quest.QuestCompletionItems)
             {
-                foreach (InventoryItem ii in Inventory)
+                
+                InventoryItem item = Inventory.SingleOrDefault(ii => ii.Details.ID == qci.Details.ID);
+
+                if (item != null)
                 {
-                    if (ii.Details.ID == qci.Details.ID)
-                    {                        
-                        ii.Quantity -= qci.Quantity;
-                        break;
-                    }
+                    RemoveItemFromInventory(item.Details, qci.Quantity);
                 }
             }
         }
 
-        public void AddItemToInventory(Item itemToAdd)
+        public void AddItemToInventory(Item itemToAdd, int quantity = 1)
         {
-            foreach (InventoryItem ii in Inventory)
-            {
-                if (ii.Details.ID == itemToAdd.ID)
-                {                    
-                    ii.Quantity++;
+            InventoryItem item = Inventory.SingleOrDefault(ii => ii.Details.ID == itemToAdd.ID);
 
-                    return; 
-                }
-            }            
-            Inventory.Add(new InventoryItem(itemToAdd, 1));
+            if (item == null)
+            {
+                Inventory.Add(new InventoryItem(itemToAdd, quantity));
+            }
+            else
+            {
+                item.Quantity += quantity;
+            }
+
+            RaiseInventoryChangedEvent(itemToAdd);
         }
 
         public void MarkQuestCompleted(Quest quest)
@@ -216,8 +255,7 @@ namespace Engine
             foreach (PlayerQuest pq in Quests)
             {
                 if (pq.Details.ID == quest.ID)
-                {
-                    
+                {                    
                     pq.IsCompleted = true;
 
                     return; 

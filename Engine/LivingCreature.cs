@@ -22,7 +22,6 @@ namespace Engine
         }
         public int MaximumHitPoints { get; set; }
 
-
         public LivingCreature(int currentHitPoints, int maximumHitPoints)
         {
             CurrentHitPoints = currentHitPoints;

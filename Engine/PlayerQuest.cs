@@ -22,7 +22,6 @@ namespace Engine
                 OnPropertyChanged("Details");
             }
         }
-
         public bool IsCompleted
         {
             get { return _isCompleted; }
@@ -33,7 +32,6 @@ namespace Engine
                 OnPropertyChanged("Name");
             }
         }
-
         public string Name
         {
             get { return Details.Name; }
@@ -44,7 +42,6 @@ namespace Engine
             Details = details;
             IsCompleted = false;
         }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string name)

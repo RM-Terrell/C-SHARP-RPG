@@ -233,8 +233,7 @@
             this.rtbMessages.ReadOnly = true;
             this.rtbMessages.Size = new System.Drawing.Size(479, 351);
             this.rtbMessages.TabIndex = 18;
-            this.rtbMessages.Text = "";
-            this.rtbMessages.TextChanged += new System.EventHandler(this.rtbMessages_TextChanged);
+            this.rtbMessages.Text = "";            
             // 
             // dgvInventory
             // 
@@ -299,8 +298,7 @@
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "SuperAdventure";
             this.Text = "My Game";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SuperAdventure_FormClosing);
-            this.Load += new System.EventHandler(this.SuperAdventure_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SuperAdventure_FormClosing);            
             ((System.ComponentModel.ISupportInitialize)(this.dgvInventory)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvQuests)).EndInit();
             this.ResumeLayout(false);

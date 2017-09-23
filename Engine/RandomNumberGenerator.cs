@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 
 namespace Engine
-{
-    // This is the more complex version
+{    
     public static class RandomNumberGenerator
     {
         private static readonly RNGCryptoServiceProvider _generator = new RNGCryptoServiceProvider();

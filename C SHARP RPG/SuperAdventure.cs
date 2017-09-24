@@ -198,8 +198,11 @@ namespace SuperAdventure
             HealingPotion potion = (HealingPotion)cboPotions.SelectedItem;
 
             _player.UsePotion(potion);
-        }        
-        
+        }
+        private void btnTrade_Click(object sender, EventArgs e)
+        {
+        }
+
         private void SuperAdventure_FormClosing(object sender, FormClosingEventArgs e)
         {
             File.WriteAllText(PLAYER_DATA_FILE_NAME, _player.ToXmlString());

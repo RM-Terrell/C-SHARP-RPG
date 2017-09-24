@@ -30,7 +30,7 @@ namespace Engine
             get { return Inventory.Where(x => x.Details is HealingPotion).Select(x => x.Details as HealingPotion).ToList(); }
         }
 
-        public int Level//
+        public int Level
         {
             get { return ((ExperiencePoints / 100) + 1); }
         }

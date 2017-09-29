@@ -112,7 +112,6 @@ namespace Engine
 
         private static void PopulateLocations()
         {
-            // Create each location
             Location home = new Location(LOCATION_ID_HOME, "Home", "Your house. You really need to clean up the place.");
 
             Location townSquare = new Location(LOCATION_ID_TOWN_SQUARE, "Town square", "You see a fountain.");
@@ -141,7 +140,6 @@ namespace Engine
             Location spiderField = new Location(LOCATION_ID_SPIDER_FIELD, "Forest", "You see spider webs covering covering the trees in this forest.");
             spiderField.MonsterLivingHere = MonsterByID(MONSTER_ID_GIANT_SPIDER);
 
-            // Link the locations together
             home.LocationToNorth = townSquare;
 
             townSquare.LocationToNorth = alchemistHut;
@@ -167,7 +165,6 @@ namespace Engine
 
             spiderField.LocationToWest = bridge;
 
-            // Add the locations to the static list
             Locations.Add(home);
             Locations.Add(townSquare);
             Locations.Add(guardPost);

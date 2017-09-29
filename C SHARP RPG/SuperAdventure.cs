@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using Engine;
+using SuperAdventure;
 
 namespace SuperAdventure
 {
@@ -33,9 +34,7 @@ namespace SuperAdventure
             lblHitPoints.DataBindings.Add("Text", _player, "CurrentHitPoints"); // Order matters here
             lblGold.DataBindings.Add("Text", _player, "Gold");
             lblExperience.DataBindings.Add("Text", _player, "ExperiencePoints");
-            lblLevel.DataBindings.Add("Text", _player, "Level");
-
-            //--------------Inventory Data Binding----------------------//
+            lblLevel.DataBindings.Add("Text", _player, "Level");            
 
             dgvInventory.RowHeadersVisible = false;
             dgvInventory.AutoGenerateColumns = false; 
@@ -55,7 +54,6 @@ namespace SuperAdventure
                 DataPropertyName = "Quantity"
             });
 
-            //----------------Quest Data Binding--------------------//
 
             dgvQuests.RowHeadersVisible = false;
             dgvQuests.AutoGenerateColumns = false;
@@ -201,6 +199,9 @@ namespace SuperAdventure
         }
         private void btnTrade_Click(object sender, EventArgs e)
         {
+            TradingScreen tradingScreen = new TradingScreen();
+            tradingScreen.StartPosition = FormStartPosition.CenterParent;
+            tradingScreen.ShowDialog(this);
         }
 
         private void SuperAdventure_FormClosing(object sender, FormClosingEventArgs e)

@@ -38,14 +38,14 @@ namespace Engine
             if (item == null)
             {
                 // The item is not in the player's inventory, so ignore it.
-                // We might want to raise an error for this situation
+                //TODO We might want to raise an error for this situation
             }
             else
             {
                 item.Quantity -= quantity;
 
                 // Don't allow negative quantities.
-                // We might want to raise an error for this situation
+                //TODO We might want to raise an error for this situation
                 if (item.Quantity < 0)
                 {
                     item.Quantity = 0;

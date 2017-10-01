@@ -508,6 +508,7 @@ namespace Engine
                 _currentMonster = null;
             }
         }
+        //TODO Testing VS 2017. Remove after successful setup
 
         //-------------------------------XML Handling----------------------------------------------//
         public string ToXmlString()

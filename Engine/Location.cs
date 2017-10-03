@@ -15,7 +15,10 @@
         public Location LocationToSouth { get; set; }
         public Location LocationToWest { get; set; }
 
-       public Location(int id, string name, string description, Item itemRequiredToEnter = null, Quest questAvailableHere = null, Monster monsterLivingHere = null)
+        public bool HasAQuest { get { return QuestAvailableHere != null; } }
+        public bool DoesNotHaveAnItemRequiredToEnter { get { return ItemRequiredToEnter == null;} }
+
+        public Location(int id, string name, string description, Item itemRequiredToEnter = null, Quest questAvailableHere = null, Monster monsterLivingHere = null)
         {
             ID = id;
             Name = name;

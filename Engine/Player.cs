@@ -351,56 +351,56 @@ namespace Engine
             }
         }
 
-        public void MoveTo(Location newLocation)
+        public void MoveTo(Location location)
         {
-            if (!HasRequiredItemToEnterThisLocation(newLocation))
+            if (PlayerDoesNotHaveTheRequiredItemToEnter(location))
             {
-                RaiseMessage("You must have a " + newLocation.ItemRequiredToEnter.Name + " to enter this location.");
+                RaiseMessage("You must have a " + location.ItemRequiredToEnter.Name + " to enter this location.");
                 return;
             }
-                        
-            CurrentLocation = newLocation;
+
+            CurrentLocation = location;
 
             FullHeal();
 
-            if (newLocation.QuestAvailableHere != null)
+            if (location.HasAQuest)
             {
-                bool playerAlreadyHasQuest = HasThisQuest(newLocation.QuestAvailableHere);
-                bool playerAlreadyCompletedQuest = CompletedThisQuest(newLocation.QuestAvailableHere);
+                bool playerAlreadyHasQuest = HasThisQuest(location.QuestAvailableHere);
+                bool playerAlreadyCompletedQuest = CompletedThisQuest(location.QuestAvailableHere);
 
                 if (playerAlreadyHasQuest)
                 {
                     if (!playerAlreadyCompletedQuest)
                     {
-                        bool playerHasAllItemsToCompleteQuest = HasAllQuestCompletionItems(newLocation.QuestAvailableHere);
+                        bool playerHasAllItemsToCompleteQuest = HasAllQuestCompletionItems(location.QuestAvailableHere);
 
                         if (playerHasAllItemsToCompleteQuest)
                         {
                             RaiseMessage("");
-                            RaiseMessage("You complete the '" + newLocation.QuestAvailableHere.Name + "' quest.");
+                            RaiseMessage("You complete the '" + location.QuestAvailableHere.Name + "' quest.");
 
-                            RemoveQuestCompletionItems(newLocation.QuestAvailableHere);
+                            RemoveQuestCompletionItems(location.QuestAvailableHere);
 
                             RaiseMessage("You receive: ");
-                            RaiseMessage(newLocation.QuestAvailableHere.RewardExperiencePoints + " experience points");
-                            RaiseMessage(newLocation.QuestAvailableHere.RewardGold + " gold");
-                            RaiseMessage(newLocation.QuestAvailableHere.RewardItem.Name, true);
+                            RaiseMessage(location.QuestAvailableHere.RewardExperiencePoints + " experience points");
+                            RaiseMessage(location.QuestAvailableHere.RewardGold + " gold");
+                            RaiseMessage(location.QuestAvailableHere.RewardItem.Name, true);
 
-                            AddExperiencePoints(newLocation.QuestAvailableHere.RewardExperiencePoints);
-                            Gold += newLocation.QuestAvailableHere.RewardGold;
+                            AddExperiencePoints(location.QuestAvailableHere.RewardExperiencePoints);
+                            Gold += location.QuestAvailableHere.RewardGold;
 
-                            AddItemToInventory(newLocation.QuestAvailableHere.RewardItem);
+                            AddItemToInventory(location.QuestAvailableHere.RewardItem);
 
-                            MarkQuestCompleted(newLocation.QuestAvailableHere);
+                            MarkQuestCompleted(location.QuestAvailableHere);
                         }
                     }
                 }
                 else
                 {
-                    RaiseMessage("You receive the " + newLocation.QuestAvailableHere.Name + " quest.");
-                    RaiseMessage(newLocation.QuestAvailableHere.Description);
+                    RaiseMessage("You receive the " + location.QuestAvailableHere.Name + " quest.");
+                    RaiseMessage(location.QuestAvailableHere.Description);
                     RaiseMessage("To complete it, return with:");
-                    foreach (QuestCompletionItem qci in newLocation.QuestAvailableHere.QuestCompletionItems)
+                    foreach (QuestCompletionItem qci in location.QuestAvailableHere.QuestCompletionItems)
                     {
                         if (qci.Quantity == 1)
                         {
@@ -413,15 +413,15 @@ namespace Engine
                     }
                     RaiseMessage("");
 
-                    Quests.Add(new PlayerQuest(newLocation.QuestAvailableHere));
+                    Quests.Add(new PlayerQuest(location.QuestAvailableHere));
                 }
             }
 
-            if (newLocation.MonsterLivingHere != null)
+            if (location.MonsterLivingHere != null)
             {
-                RaiseMessage("You see a " + newLocation.MonsterLivingHere.Name);
+                RaiseMessage("You see a " + location.MonsterLivingHere.Name);
 
-                Monster standardMonster = World.MonsterByID(newLocation.MonsterLivingHere.ID);
+                Monster standardMonster = World.MonsterByID(location.MonsterLivingHere.ID);
 
                 _currentMonster = new Monster(standardMonster.ID, standardMonster.Name, standardMonster.MaximumDamage,
                     standardMonster.RewardExperiencePoints, standardMonster.RewardGold, standardMonster.CurrentHitPoints, standardMonster.MaximumHitPoints);
@@ -461,6 +461,11 @@ namespace Engine
 
                 MoveHome();
             }
+        }
+
+        private bool PlayerDoesNotHaveTheRequiredItemToEnter(Location location)
+        {
+            return !HasRequiredItemToEnterThisLocation(location);
         }
 
 
